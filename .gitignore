@@ -1,0 +1,35 @@
+# Environments (2.7GB, and the torch venv needs numpy<2 which conflicts with the
+# main one — see README for why there are two)
+.venv/
+.venv-parse/
+
+# Downloaded model weights. All fetched automatically on first run.
+models/
+*.onnx
+*.task
+*.pth
+
+# Face photographs and everything derived from them.
+#
+# Deliberately excluded from this public repo. bench/ alone holds 32 warped
+# variants of a real person's face, and a public git history is permanent,
+# forkable and crawled. Every image regenerates from your own photo:
+#
+#   python scripts/make_benchmark.py <your-photo>
+#   python scripts/run_variants.py   <your-photo> out
+data/
+out/
+bench/
+
+# Adapter caches. .cache/faceparse holds segmentation masks cut from real
+# photographs — derived biometric data, same exclusion rule as the photos.
+.cache/
+*.log
+
+# Local machine settings, not project config.
+.claude/settings.local.json
+
+__pycache__/
+*.py[cod]
+.DS_Store
+.ipynb_checkpoints/
