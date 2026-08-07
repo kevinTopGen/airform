@@ -1,9 +1,10 @@
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import { App as TournamentExperience } from "../App";
 import type { SurgeonCase } from "../tournament/domain/models";
+import { tournamentService } from "../tournament/ui/browserTournament";
 import { SurgeonMap } from "./map/SurgeonMap";
-import { demoSurgeons, getSurgeonBySlug, getSurgeonCases, launchPreview, type SurgeonProfile } from "./data/surgeons";
-import renderSignatureUrl from "../../fixtures/render_signature.jpg";
+import { demoSurgeons, getSurgeonBySlug, getSurgeonCases, type SurgeonProfile } from "./data/surgeons";
+import { BrowserPreview } from "./preview/BrowserPreview";
 import "./product-shell.css";
 
 type Route = { name: "home" } | { name: "profile"; slug: string } | { name: "preview"; slug: string } | { name: "tournament" };
@@ -63,9 +64,9 @@ function SurgeonRow({ surgeon, rank, selected, onSelect, onOpen }: { surgeon: Su
   </article>;
 }
 
-function HomePage({ navigate }: NavigateProps) {
-  const [selectedId, setSelectedId] = useState(demoSurgeons[0].id);
-  const selectedSurgeon = useMemo(() => demoSurgeons.find((surgeon) => surgeon.id === selectedId) ?? demoSurgeons[0], [selectedId]);
+function HomePage({ navigate, surgeons }: NavigateProps & { surgeons: readonly SurgeonProfile[] }) {
+  const [selectedId, setSelectedId] = useState(surgeons[0].id);
+  const selectedSurgeon = useMemo(() => surgeons.find((surgeon) => surgeon.id === selectedId) ?? surgeons[0], [selectedId, surgeons]);
   const scrollToSurgeons = (event?: FormEvent) => { event?.preventDefault(); document.getElementById("surgeons")?.scrollIntoView({ behavior: "smooth" }); };
   return <>
     <section className="product-hero">
@@ -77,16 +78,17 @@ function HomePage({ navigate }: NavigateProps) {
     </section>
     <section className="discovery-section" id="surgeons">
       <div className="discovery-heading"><div><h2>Four perspectives. One city.</h2><p>Community scores reflect anonymous preference rankings.</p></div><p>Showing four rhinoplasty surgeons in Miami, FL</p></div>
-      <div className="discovery-grid"><div className="surgeon-rail">{demoSurgeons.map((surgeon, index) => <SurgeonRow key={surgeon.id} surgeon={surgeon} rank={index + 1} selected={surgeon.id === selectedSurgeon.id} onSelect={() => setSelectedId(surgeon.id)} onOpen={() => navigate(`/surgeons/${surgeon.slug}`)} />)}<button className="rail-link" type="button" onClick={() => navigate("/tournament")}>View full rankings <ArrowIcon /></button></div>
-        <SurgeonMap surgeons={demoSurgeons} selectedSurgeonId={selectedSurgeon.id} onSelectSurgeon={setSelectedId} onViewProfile={(slug) => navigate(`/surgeons/${slug}`)} />
+      <div className="discovery-grid"><div className="surgeon-rail">{surgeons.map((surgeon, index) => <SurgeonRow key={surgeon.id} surgeon={surgeon} rank={index + 1} selected={surgeon.id === selectedSurgeon.id} onSelect={() => setSelectedId(surgeon.id)} onOpen={() => navigate(`/surgeons/${surgeon.slug}`)} />)}<button className="rail-link" type="button" onClick={() => navigate("/tournament")}>View full rankings <ArrowIcon /></button></div>
+        <SurgeonMap surgeons={surgeons} selectedSurgeonId={selectedSurgeon.id} onSelectSurgeon={setSelectedId} onViewProfile={(slug) => navigate(`/surgeons/${slug}`)} />
       </div>
     </section>
     <section className="ranking-callout" id="how-it-works"><div className="ranking-symbol" aria-hidden="true">A/B</div><div><h2>Your preference shapes the score.</h2><p>Compare outcomes side by side and help others understand the community’s aesthetic preference.</p></div><button type="button" onClick={() => navigate("/tournament")}>Start comparing</button></section>
   </>;
 }
 
-function ProfilePage({ slug, navigate }: NavigateProps & { slug: string }) {
-  const surgeon = getSurgeonBySlug(slug);
+function ProfilePage({ slug, navigate, scores }: NavigateProps & { slug: string; scores: ReadonlyMap<string, number> }) {
+  const storedSurgeon = getSurgeonBySlug(slug);
+  const surgeon = storedSurgeon ? { ...storedSurgeon, communityScore: scores.get(storedSurgeon.id) ?? storedSurgeon.communityScore } : null;
   if (!surgeon) return <NotFound navigate={navigate} />;
   const cases = getSurgeonCases(surgeon.id);
   return <main className="profile-page">
@@ -97,21 +99,27 @@ function ProfilePage({ slug, navigate }: NavigateProps & { slug: string }) {
   </main>;
 }
 
-function PreviewHandoff({ slug, navigate }: NavigateProps & { slug: string }) {
+function PreviewExperience({ slug, navigate }: NavigateProps & { slug: string }) {
   const surgeon = getSurgeonBySlug(slug);
   if (!surgeon) return <NotFound navigate={navigate} />;
-  const descriptor = launchPreview(surgeon);
-  return <main className="preview-handoff"><div className="preview-image"><img src={renderSignatureUrl} alt="Airform geometric preview demonstration" /></div><div className="preview-copy"><h1>Preview {surgeon.name}’s aesthetic.</h1><p>The product shell is ready to hand this stable surgeon ID to the image pipeline.</p><code>{descriptor.surgeonId}</code><button type="button" onClick={() => navigate(`/surgeons/${surgeon.slug}`)}>Return to profile</button></div></main>;
+  return <BrowserPreview surgeon={surgeon} navigate={navigate} />;
 }
 
 function NotFound({ navigate }: NavigateProps) { return <main className="not-found"><h1>That surgeon isn’t in this demo.</h1><button type="button" onClick={() => navigate("/")}>Return home</button></main>; }
 
 export function ProductApp() {
   const [route, setRoute] = useState<Route>(parseRoute);
+  const [communityScores, setCommunityScores] = useState<ReadonlyMap<string, number>>(new Map());
   useEffect(() => { const onPopState = () => setRoute(parseRoute()); window.addEventListener("popstate", onPopState); return () => window.removeEventListener("popstate", onPopState); }, []);
+  useEffect(() => {
+    void tournamentService.getSurgeonScores("rhinoplasty").then((scores) => {
+      setCommunityScores(new Map(scores.flatMap((score) => score.score == null ? [] : [[score.surgeonId, Math.round(score.score)] as const])));
+    });
+  }, [route.name]);
   const navigate = (path: string) => { const [pathname, hash] = path.split("#"); const nextPath = pathname || window.location.pathname; window.history.pushState({}, "", `${APP_BASE}${nextPath}${hash ? `#${hash}` : ""}`); setRoute(parseRoute()); window.scrollTo({ top: 0, behavior: "smooth" }); if (hash) window.setTimeout(() => document.getElementById(hash)?.scrollIntoView({ behavior: "smooth" }), 0); };
-  if (route.name === "tournament") return <TournamentExperience />;
-  return <div className="product-shell"><ProductHeader navigate={navigate} />{route.name === "home" ? <HomePage navigate={navigate} /> : null}{route.name === "profile" ? <ProfilePage slug={route.slug} navigate={navigate} /> : null}{route.name === "preview" ? <PreviewHandoff slug={route.slug} navigate={navigate} /> : null}<footer className="product-footer"><span>airform / Miami demo</span><span>Aesthetic exploration only. Not medical advice.</span></footer></div>;
+  if (route.name === "tournament") return <TournamentExperience onExit={() => navigate("/")} />;
+  const scoredSurgeons = demoSurgeons.map((surgeon) => ({ ...surgeon, communityScore: communityScores.get(surgeon.id) ?? surgeon.communityScore }));
+  return <div className="product-shell"><ProductHeader navigate={navigate} />{route.name === "home" ? <HomePage navigate={navigate} surgeons={scoredSurgeons} /> : null}{route.name === "profile" ? <ProfilePage slug={route.slug} navigate={navigate} scores={communityScores} /> : null}{route.name === "preview" ? <PreviewExperience slug={route.slug} navigate={navigate} /> : null}<footer className="product-footer"><span>airform / Miami demo</span><span>Aesthetic exploration only. Not medical advice.</span></footer></div>;
 }
 
 export default ProductApp;

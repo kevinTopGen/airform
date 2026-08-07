@@ -8,6 +8,7 @@ import {
   launchPreview,
   listSurgeons,
 } from "../data/surgeons";
+import { getSignaturePrior } from "../preview/signaturePriors";
 
 describe("demo surgeon provider", () => {
   it("lists exactly four stable, mappable Miami-area profiles", () => {
@@ -24,6 +25,16 @@ describe("demo surgeon provider", () => {
   it("looks profiles up by normalized slug", () => {
     expect(getSurgeonBySlug(" AURORA ")?.id).toBe("surgeon-aurora");
     expect(getSurgeonBySlug("missing")).toBeNull();
+  });
+
+  it("maps every fictional surgeon to a canonical Airform signature prior", () => {
+    expect(demoSurgeons.map((surgeon) => getSignaturePrior(surgeon.signatureId).id)).toEqual([
+      "conservative",
+      "alar",
+      "dorsal",
+      "signature",
+    ]);
+    expect(getSignaturePrior("signature").delta.alarWidth).toBe(-0.107);
   });
 
   it("derives case ownership from the canonical surgery fixtures", () => {

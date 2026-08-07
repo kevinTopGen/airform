@@ -15,7 +15,11 @@ import {
 
 type View = "compare" | "leaderboard";
 
-export function App() {
+interface AppProps {
+  readonly onExit?: () => void;
+}
+
+export function App({ onExit }: AppProps = {}) {
   const [view, setView] = useState<View>("compare");
   const [voterId, setVoterId] = useState(getOrCreateVoterId);
   const [matchup, setMatchup] = useState<AnonymousMatchup | null>(null);
@@ -123,10 +127,11 @@ export function App() {
   return (
     <div className="site-shell" data-airform-surface="tournament">
       <header className="site-header">
-        <button className="wordmark" type="button" onClick={() => setView("compare")}>
+        <button className="wordmark" type="button" onClick={() => onExit ? onExit() : setView("compare")}>
           airform <span>/</span> compare
         </button>
         <nav aria-label="Primary navigation">
+          {onExit ? <button onClick={onExit}>Find surgeons</button> : null}
           <button className={view === "compare" ? "is-active" : ""} onClick={() => setView("compare")}>Compare</button>
           <button className={view === "leaderboard" ? "is-active" : ""} onClick={() => setView("leaderboard")}>Leaderboard</button>
         </nav>

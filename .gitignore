@@ -25,6 +25,8 @@ models/
 /bench/
 /rhinoplasty_dataset/
 /doctor_bank/
+/doctor_bank_rejected/
+/doctor_bank_gallery.html
 /tmp_qc/
 
 # Adapter caches. .cache/faceparse holds segmentation masks cut from real
