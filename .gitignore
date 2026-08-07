@@ -18,6 +18,9 @@ models/
 #   python scripts/make_benchmark.py <your-photo>
 #   python scripts/run_variants.py   <your-photo> out
 /data/
+# ...except fitted signatures: numbers only, no imagery, and the artifact the
+# frontend actually consumes.
+!/data/signatures/
 /out/
 /bench/
 /rhinoplasty_dataset/
