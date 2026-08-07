@@ -28,6 +28,54 @@ Three things make it work rather than merely run:
 MediaPipe is used only to place the frame and to supply the interpupillary
 scale, both of which are rigid-face quantities the surgery does not move; every
 number that varies between before and after comes from the mask.
+
+RESULTS (scripts/bench.py, 30 warps x 2 tones)
+
+    parameter      tone            k       r     rms   verdict
+    alar_width     normal      0.542   0.999    6.3%   USABLE
+    alar_width     dark_flat   0.532   0.999    6.5%   USABLE
+    bridge_width   normal      0.063   0.987   12.9%   unusable
+    bridge_width   dark_flat   0.082   0.999   12.6%   unusable
+    tip_width      normal      0.069   0.995   12.8%   unusable
+    tip_width      dark_flat   0.075   0.997   12.7%   unusable
+
+The segmentation hypothesis is half right. Reliability is everything it was
+supposed to be: r >= 0.987 on all six cells, and the alar gain is the same to
+2% under a tone change (0.50 gain / 0.45 contrast) that swings photometric's
+alar gain from 0.83 to 0.99 and collapses its bridge correlation to r = 0.68.
+Nothing here is fitted per tone; the mask boundary simply does not care about
+exposure, which was the whole reason to try a parser.
+
+What it does not deliver is gain. The mask boundary is a *damped* version of the
+true silhouette, and the damping tracks how much image evidence the boundary
+has:
+
+  * At the alar crease -- a real shadow line -- a +15% alar warp moves the
+    photometric edge +11.96% and the mask boundary +8.25%. The parser recovers
+    about two thirds of a displacement that is plainly visible in the pixels.
+  * At the bridge, where the dorsum blends into the cheek with no edge at all,
+    a -20% bridge warp moves the mask boundary -1.4% (one side moves 1.3 px,
+    the other does not move at all). The parser is falling back on its shape
+    prior exactly where the landmark regressor does.
+
+So the failure mode is the same as MediaPipe's -- prior instead of evidence --
+but far milder and, crucially, monotone: mp_mesh gets r = -0.18 on bridge under
+normal tone, faceparse gets r = 0.987. A signal at k = 0.06 is still a signal,
+it is just 16x below the calibration headroom the k > 0.25 rule demands.
+
+Two checks that this is the technique's real ceiling and not a tuning artefact:
+sweeping the iso-contour from m = -8 to m = +8 logits moves the alar gain only
+0.524 -> 0.559, so the argmax boundary is not a lucky threshold; and the tip
+result is a property of the ground truth rather than of the parser, because
+deform.py splits lower-nose authority between the wings and the lobule, leaving
+the outer silhouette only ~0.12 of a tip_width request -- photometric, which
+measures the same silhouette by a completely different route, also lands at
+k = 0.09-0.11.
+
+VERDICT: use faceparse for alar_width, where a stable 0.54 gain and r = 0.999
+across tones make it the most trustworthy alar measurement of the three (its rms
+is worse than photometric's only because rms punishes the honest gain deficit,
+which calibration removes). Do not fit bridge or tip on it.
 """
 
 from __future__ import annotations
@@ -194,7 +242,7 @@ def _band_width(m, R, u, v, L, t_lo, t_hi, widest=False):
     """
     h, w = m.shape[:2]
     b_max = B_MAX * L
-    nb = int(2 * b_max / STEP) + 1
+    nb = 2 * int(b_max / STEP) + 1     # odd, so index nb // 2 is exactly b = 0
     b = np.linspace(-b_max, b_max, nb)
     ts = np.linspace(t_lo, t_hi, N_ROWS)
 

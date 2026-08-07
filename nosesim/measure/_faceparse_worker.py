@@ -90,11 +90,6 @@ def parse_one(image_path: str, out_png: str) -> dict:
     enc = np.clip(margin, -MARGIN_CLIP, MARGIN_CLIP) / MARGIN_CLIP * 0.5 + 0.5
     enc = np.clip(np.rint(enc * 65535.0), 0, 65535).astype(np.uint16)
 
-    tmp = out_png + ".tmp.png"
-    if not cv2.imwrite(tmp, enc):
-        return {"ok": False, "error": f"could not write {tmp}"}
-    os.replace(tmp, out_png)
-
     meta = {
         "ok": True,
         "version": FORMAT_VERSION,
@@ -105,8 +100,17 @@ def parse_one(image_path: str, out_png: str) -> dict:
         "rect": [float(x) for x in rects[fi]],
         "png": os.path.basename(out_png),
     }
-    with open(out_png + ".json", "w") as f:
+    # Both writes go through os.replace, and the sidecar lands first, so a
+    # concurrent reader either sees a complete pair or falls back to re-parsing.
+    # Agents share this cache directory.
+    with open(out_png + ".json.tmp", "w") as f:
         json.dump(meta, f)
+    os.replace(out_png + ".json.tmp", out_png + ".json")
+
+    tmp = out_png + ".tmp.png"
+    if not cv2.imwrite(tmp, enc):
+        return {"ok": False, "error": f"could not write {tmp}"}
+    os.replace(tmp, out_png)
     return meta
 
 
