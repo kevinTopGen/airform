@@ -171,3 +171,27 @@ archetypes communicate the idea better anyway.
 Not medical advice, not a surgical planning tool, and not affiliated with any
 practice. A geometric estimate is not a prediction of what surgery will do to
 your face.
+
+## Community preference tournament
+
+The `agent/tournament` branch adds a detachable React/Vite pairwise-comparison
+surface under `src/tournament`. It uses the same stable surgeon identity as the
+simulation core:
+
+```text
+SurgeryCase.surgeonId == Surgeon.id == SurgeonSignature.id
+```
+
+For the local fictional-fixture demo:
+
+```bash
+npm install
+npm run dev
+```
+
+Run the tournament checks with `npm test` and `npm run build`. The exact
+provider boundary, proposed HTTP routes, scraper-manifest mapping, and merge
+procedure are documented in `docs/AIRFORM_INTEGRATION.md` and
+`docs/TOURNAMENT_INTEGRATION_SPEC.md`.
+
+The preference score is not a clinical-quality or surgical-safety score.
