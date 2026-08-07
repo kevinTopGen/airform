@@ -1,0 +1,182 @@
+{
+  "source": "data/kevin.jpg",
+  "view": "frontal",
+  "measured": {
+    "alar_width": 0.6118218025723355,
+    "bridge_width": 0.1973692089270547,
+    "tip_width": 0.23330022983534576,
+    "nasal_length": 0.7576418727057622
+  },
+  "variants": [
+    {
+      "signature": {
+        "id": "conservative",
+        "name": "The Conservative",
+        "tagline": "Preserves ethnic character. You, slightly edited.",
+        "n_pairs": 0,
+        "delta": {
+          "alar_width": -0.023,
+          "bridge_width": -0.041,
+          "tip_width": -0.049,
+          "nasal_length": -0.005
+        },
+        "std": {},
+        "delta_modes": {
+          "alar_width": "proportional",
+          "bridge_width": "proportional",
+          "tip_width": "proportional",
+          "nasal_length": "absolute"
+        }
+      },
+      "target": {
+        "alar_width": 0.5977499011131718,
+        "bridge_width": 0.18927707136104546,
+        "tip_width": 0.2218685185734138,
+        "nasal_length": 0.7526418727057622
+      },
+      "pct_change": {
+        "alar_width": -2.300000000000002,
+        "bridge_width": -4.0999999999999925,
+        "tip_width": -4.900000000000004,
+        "nasal_length": -0.6599424055251268
+      },
+      "render_ms": 1738
+    },
+    {
+      "signature": {
+        "id": "alar",
+        "name": "The Base Reducer",
+        "tagline": "Weir excisions. Narrows the base, leaves the bridge alone.",
+        "n_pairs": 0,
+        "delta": {
+          "alar_width": -0.095,
+          "bridge_width": -0.014,
+          "tip_width": -0.055,
+          "nasal_length": 0.0
+        },
+        "std": {},
+        "delta_modes": {
+          "alar_width": "proportional",
+          "bridge_width": "proportional",
+          "tip_width": "proportional",
+          "nasal_length": "absolute"
+        }
+      },
+      "target": {
+        "alar_width": 0.5536987313279637,
+        "bridge_width": 0.19460604000207593,
+        "tip_width": 0.22046871719440173,
+        "nasal_length": 0.7576418727057622
+      },
+      "pct_change": {
+        "alar_width": -9.499999999999996,
+        "bridge_width": -1.4000000000000012,
+        "tip_width": -5.500000000000005,
+        "nasal_length": 0.0
+      },
+      "render_ms": 1813
+    },
+    {
+      "signature": {
+        "id": "dorsal",
+        "name": "The Dorsal Preservationist",
+        "tagline": "Narrows the bridge, keeps the tip you were born with.",
+        "n_pairs": 0,
+        "delta": {
+          "alar_width": -0.015,
+          "bridge_width": -0.157,
+          "tip_width": -0.033,
+          "nasal_length": -0.008
+        },
+        "std": {},
+        "delta_modes": {
+          "alar_width": "proportional",
+          "bridge_width": "proportional",
+          "tip_width": "proportional",
+          "nasal_length": "absolute"
+        }
+      },
+      "target": {
+        "alar_width": 0.6026444755337504,
+        "bridge_width": 0.16638224312550712,
+        "tip_width": 0.22560132225077933,
+        "nasal_length": 0.7496418727057622
+      },
+      "pct_change": {
+        "alar_width": -1.5000000000000124,
+        "bridge_width": -15.700000000000003,
+        "tip_width": -3.300000000000003,
+        "nasal_length": -1.0559078488401985
+      },
+      "render_ms": 1714
+    },
+    {
+      "signature": {
+        "id": "tip",
+        "name": "The Tip Sculptor",
+        "tagline": "Everything happens below the supratip. Shorter, rotated.",
+        "n_pairs": 0,
+        "delta": {
+          "alar_width": -0.034,
+          "bridge_width": -0.027,
+          "tip_width": -0.151,
+          "nasal_length": -0.045
+        },
+        "std": {},
+        "delta_modes": {
+          "alar_width": "proportional",
+          "bridge_width": "proportional",
+          "tip_width": "proportional",
+          "nasal_length": "absolute"
+        }
+      },
+      "target": {
+        "alar_width": 0.5910198612848762,
+        "bridge_width": 0.19204024028602423,
+        "tip_width": 0.19807189513020854,
+        "nasal_length": 0.7126418727057622
+      },
+      "pct_change": {
+        "alar_width": -3.399999999999992,
+        "bridge_width": -2.6999999999999913,
+        "tip_width": -15.100000000000001,
+        "nasal_length": -5.939481649726119
+      },
+      "render_ms": 1707
+    },
+    {
+      "signature": {
+        "id": "signature",
+        "name": "The Miami Signature",
+        "tagline": "You will not be mistaken for un-operated.",
+        "n_pairs": 0,
+        "delta": {
+          "alar_width": -0.107,
+          "bridge_width": -0.163,
+          "tip_width": -0.192,
+          "nasal_length": -0.038
+        },
+        "std": {},
+        "delta_modes": {
+          "alar_width": "proportional",
+          "bridge_width": "proportional",
+          "tip_width": "proportional",
+          "nasal_length": "absolute"
+        }
+      },
+      "target": {
+        "alar_width": 0.5463568696970956,
+        "bridge_width": 0.1651980278719448,
+        "tip_width": 0.18850658570695938,
+        "nasal_length": 0.7196418727057622
+      },
+      "pct_change": {
+        "alar_width": -10.7,
+        "bridge_width": -16.299999999999994,
+        "tip_width": -19.199999999999996,
+        "nasal_length": -5.015562281990937
+      },
+      "render_ms": 1723
+    }
+  ]
+}
