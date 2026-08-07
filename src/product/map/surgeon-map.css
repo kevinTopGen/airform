@@ -1,0 +1,362 @@
+.surgeon-map {
+  --map-oxblood: var(--airform-color-accent, #7c1731);
+  --map-ink: var(--airform-color-ink, #181413);
+  --map-paper: var(--airform-color-background, #fffdf9);
+  --map-line: var(--airform-color-line, #d9d1c7);
+  width: 100%;
+  color: var(--map-ink);
+  font-family: "Helvetica Neue", "Nimbus Sans L", "Aptos", sans-serif;
+}
+
+.surgeon-map__topline {
+  min-height: 70px;
+  padding: 0 2px 14px;
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.surgeon-map__topline > div {
+  display: grid;
+  gap: 3px;
+}
+
+.surgeon-map__kicker {
+  color: var(--map-oxblood);
+  font-size: 0.67rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.surgeon-map__topline strong {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(1.3rem, 2.2vw, 1.8rem);
+  font-weight: 500;
+  letter-spacing: -0.035em;
+}
+
+.surgeon-map__count {
+  padding-bottom: 4px;
+  color: #706966;
+  font-size: 0.76rem;
+  letter-spacing: 0.055em;
+  text-transform: uppercase;
+}
+
+.surgeon-map__stage {
+  position: relative;
+  min-height: 430px;
+  overflow: hidden;
+  border: 1px solid var(--map-ink);
+  border-radius: 2px;
+  background: #e7e2d9;
+  box-shadow: 0 24px 60px rgb(50 31 27 / 11%);
+  isolation: isolate;
+}
+
+.surgeon-map__google,
+.surgeon-map__fallback,
+.surgeon-map__loading {
+  position: absolute;
+  inset: 0;
+}
+
+.surgeon-map__google {
+  background: #ebe7df;
+}
+
+.surgeon-map__loading {
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 15px;
+  background:
+    linear-gradient(125deg, transparent 42%, rgb(124 23 49 / 7%) 42% 43%, transparent 43%),
+    #ebe7df;
+  color: #615b57;
+  font-size: 0.82rem;
+  letter-spacing: 0.06em;
+}
+
+.surgeon-map__loading span {
+  width: 34px;
+  height: 34px;
+  border: 1px solid rgb(124 23 49 / 25%);
+  border-top-color: var(--map-oxblood);
+  border-radius: 50%;
+  animation: surgeon-map-spin 900ms linear infinite;
+}
+
+.surgeon-map__loading p {
+  margin: 0;
+}
+
+.surgeon-map__fallback {
+  overflow: hidden;
+  background:
+    linear-gradient(112deg, transparent 0 66%, rgb(168 205 210 / 52%) 66% 100%),
+    repeating-linear-gradient(14deg, transparent 0 31px, rgb(255 255 255 / 42%) 32px 34px),
+    repeating-linear-gradient(98deg, transparent 0 49px, rgb(255 255 255 / 48%) 50px 52px),
+    #e4dfd5;
+}
+
+.surgeon-map__fallback::before {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 24% 30%, rgb(255 253 249 / 70%) 0 6%, transparent 6.5%),
+    radial-gradient(circle at 50% 72%, rgb(200 215 186 / 38%) 0 8%, transparent 8.5%);
+  content: "";
+  pointer-events: none;
+}
+
+.surgeon-map__water-label,
+.surgeon-map__place {
+  position: absolute;
+  z-index: 1;
+  color: #788f91;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 0.68rem;
+  font-style: italic;
+  letter-spacing: 0.08em;
+  pointer-events: none;
+}
+
+.surgeon-map__water-label {
+  top: 47%;
+  right: 4%;
+  transform: rotate(76deg);
+}
+
+.surgeon-map__place {
+  color: rgb(55 49 45 / 48%);
+  font-family: inherit;
+  font-size: 0.58rem;
+  font-style: normal;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+}
+
+.surgeon-map__place.is-north { top: 20%; right: 19%; }
+.surgeon-map__place.is-center { top: 53%; left: 51%; }
+.surgeon-map__place.is-south { bottom: 14%; left: 30%; }
+
+.surgeon-map__road {
+  position: absolute;
+  z-index: 0;
+  height: 4px;
+  border: solid rgb(255 255 255 / 85%);
+  border-width: 1px 0;
+  background: #d5cdbf;
+  pointer-events: none;
+}
+
+.surgeon-map__road.is-one { top: 38%; left: -7%; width: 74%; transform: rotate(-9deg); }
+.surgeon-map__road.is-two { top: 61%; left: 11%; width: 62%; transform: rotate(17deg); }
+.surgeon-map__road.is-three { top: 45%; left: 40%; width: 66%; transform: rotate(83deg); }
+
+.surgeon-map__fallback-marker {
+  position: absolute;
+  z-index: 4;
+  width: 43px;
+  height: 43px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  border: 2px solid #fff;
+  border-radius: 50% 50% 50% 4px;
+  background: var(--map-oxblood);
+  color: #fff;
+  box-shadow: 0 5px 11px rgb(57 12 22 / 25%);
+  cursor: pointer;
+  transform: translate(-50%, -100%) rotate(-45deg);
+  transition: width 160ms ease, height 160ms ease, box-shadow 160ms ease, filter 160ms ease;
+}
+
+.surgeon-map__fallback-marker span {
+  font-size: 0.72rem;
+  font-weight: 800;
+  transform: rotate(45deg);
+}
+
+.surgeon-map__fallback-marker:hover,
+.surgeon-map__fallback-marker.is-selected {
+  width: 49px;
+  height: 49px;
+  border-color: #f4ddc0;
+  box-shadow: 0 9px 18px rgb(57 12 22 / 36%);
+  filter: saturate(1.15);
+}
+
+.surgeon-map__fallback-marker:focus-visible {
+  outline: 3px solid #161110;
+  outline-offset: 4px;
+}
+
+.surgeon-map__popover {
+  position: absolute;
+  right: 18px;
+  bottom: 18px;
+  left: 18px;
+  z-index: 20;
+  max-width: 510px;
+  min-height: 100px;
+  padding: 12px;
+  display: grid;
+  grid-template-columns: 76px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 15px;
+  border: 1px solid rgb(24 20 19 / 78%);
+  background: rgb(255 253 249 / 96%);
+  box-shadow: 0 16px 38px rgb(35 20 18 / 21%);
+  backdrop-filter: blur(10px);
+  animation: surgeon-map-pop 180ms ease-out both;
+}
+
+.surgeon-map__portrait {
+  width: 76px;
+  height: 76px;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  border-radius: 1px;
+  background: #e9ded5;
+  color: var(--map-oxblood);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.2rem;
+}
+
+.surgeon-map__portrait img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.surgeon-map__popover-copy {
+  min-width: 0;
+}
+
+.surgeon-map__popover-copy p,
+.surgeon-map__popover-copy h3 {
+  margin: 0;
+}
+
+.surgeon-map__eyebrow {
+  color: var(--map-oxblood);
+  font-size: 0.61rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.surgeon-map__popover-copy h3 {
+  margin-top: 4px;
+  overflow: hidden;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.14rem;
+  font-weight: 500;
+  letter-spacing: -0.025em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.surgeon-map__location {
+  margin-top: 5px !important;
+  color: #655e5a;
+  font-size: 0.76rem;
+}
+
+.surgeon-map__popover > button {
+  min-height: 38px;
+  padding: 0 13px;
+  border: 1px solid var(--map-oxblood);
+  background: var(--map-oxblood);
+  color: #fff;
+  font: inherit;
+  font-size: 0.72rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 150ms ease, color 150ms ease;
+}
+
+.surgeon-map__popover > button:hover {
+  background: #fffdf9;
+  color: var(--map-oxblood);
+}
+
+.surgeon-map__popover > button:focus-visible {
+  outline: 2px solid #161110;
+  outline-offset: 3px;
+}
+
+.surgeon-map__legend {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  z-index: 15;
+  padding: 8px 10px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  border: 1px solid rgb(24 20 19 / 24%);
+  background: rgb(255 253 249 / 91%);
+  color: #5e5753;
+  font-size: 0.64rem;
+  font-weight: 700;
+  letter-spacing: 0.055em;
+  text-transform: uppercase;
+  backdrop-filter: blur(8px);
+}
+
+.surgeon-map__legend span {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--map-oxblood);
+}
+
+@keyframes surgeon-map-spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes surgeon-map-pop {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 640px) {
+  .surgeon-map__stage {
+    min-height: 390px;
+  }
+
+  .surgeon-map__popover {
+    right: 10px;
+    bottom: 10px;
+    left: 10px;
+    grid-template-columns: 56px minmax(0, 1fr);
+    gap: 11px;
+  }
+
+  .surgeon-map__portrait {
+    width: 56px;
+    height: 56px;
+  }
+
+  .surgeon-map__popover > button {
+    grid-column: 1 / -1;
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .surgeon-map__loading span,
+  .surgeon-map__popover {
+    animation: none;
+  }
+
+  .surgeon-map__fallback-marker {
+    transition: none;
+  }
+}
