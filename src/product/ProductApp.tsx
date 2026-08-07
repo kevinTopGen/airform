@@ -2,8 +2,8 @@ import { FormEvent, useEffect, useMemo, useState } from "react";
 import { App as TournamentExperience } from "../App";
 import type { SurgeonCase } from "../tournament/domain/models";
 import { SurgeonMap } from "./map/SurgeonMap";
-import { demoSurgeons, getSurgeonBySlug, getSurgeonCases, launchPreview, type SurgeonProfile } from "./data/surgeons";
-import renderSignatureUrl from "../../fixtures/render_signature.jpg";
+import { demoSurgeons, getSurgeonBySlug, getSurgeonCases, type SurgeonProfile } from "./data/surgeons";
+import { BrowserPreview } from "./preview/BrowserPreview";
 import "./product-shell.css";
 
 type Route = { name: "home" } | { name: "profile"; slug: string } | { name: "preview"; slug: string } | { name: "tournament" };
@@ -97,11 +97,10 @@ function ProfilePage({ slug, navigate }: NavigateProps & { slug: string }) {
   </main>;
 }
 
-function PreviewHandoff({ slug, navigate }: NavigateProps & { slug: string }) {
+function PreviewExperience({ slug, navigate }: NavigateProps & { slug: string }) {
   const surgeon = getSurgeonBySlug(slug);
   if (!surgeon) return <NotFound navigate={navigate} />;
-  const descriptor = launchPreview(surgeon);
-  return <main className="preview-handoff"><div className="preview-image"><img src={renderSignatureUrl} alt="Airform geometric preview demonstration" /></div><div className="preview-copy"><h1>Preview {surgeon.name}’s aesthetic.</h1><p>The product shell is ready to hand this stable surgeon ID to the image pipeline.</p><code>{descriptor.surgeonId}</code><button type="button" onClick={() => navigate(`/surgeons/${surgeon.slug}`)}>Return to profile</button></div></main>;
+  return <BrowserPreview surgeon={surgeon} navigate={navigate} />;
 }
 
 function NotFound({ navigate }: NavigateProps) { return <main className="not-found"><h1>That surgeon isn’t in this demo.</h1><button type="button" onClick={() => navigate("/")}>Return home</button></main>; }
@@ -111,7 +110,7 @@ export function ProductApp() {
   useEffect(() => { const onPopState = () => setRoute(parseRoute()); window.addEventListener("popstate", onPopState); return () => window.removeEventListener("popstate", onPopState); }, []);
   const navigate = (path: string) => { const [pathname, hash] = path.split("#"); const nextPath = pathname || window.location.pathname; window.history.pushState({}, "", `${APP_BASE}${nextPath}${hash ? `#${hash}` : ""}`); setRoute(parseRoute()); window.scrollTo({ top: 0, behavior: "smooth" }); if (hash) window.setTimeout(() => document.getElementById(hash)?.scrollIntoView({ behavior: "smooth" }), 0); };
   if (route.name === "tournament") return <TournamentExperience />;
-  return <div className="product-shell"><ProductHeader navigate={navigate} />{route.name === "home" ? <HomePage navigate={navigate} /> : null}{route.name === "profile" ? <ProfilePage slug={route.slug} navigate={navigate} /> : null}{route.name === "preview" ? <PreviewHandoff slug={route.slug} navigate={navigate} /> : null}<footer className="product-footer"><span>airform / Miami demo</span><span>Aesthetic exploration only. Not medical advice.</span></footer></div>;
+  return <div className="product-shell"><ProductHeader navigate={navigate} />{route.name === "home" ? <HomePage navigate={navigate} /> : null}{route.name === "profile" ? <ProfilePage slug={route.slug} navigate={navigate} /> : null}{route.name === "preview" ? <PreviewExperience slug={route.slug} navigate={navigate} /> : null}<footer className="product-footer"><span>airform / Miami demo</span><span>Aesthetic exploration only. Not medical advice.</span></footer></div>;
 }
 
 export default ProductApp;

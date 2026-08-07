@@ -1,6 +1,7 @@
 import { localSurgeryCaseFixtures } from "../../tournament/data/fixtures";
 import { adaptSurgeryCases } from "../../tournament/domain/externalContracts";
 import type { SurgeonCase } from "../../tournament/domain/models";
+import type { AirformArchetypeId } from "../preview/signaturePriors";
 
 export interface SurgeonProfile {
   readonly id: string;
@@ -15,6 +16,8 @@ export interface SurgeonProfile {
   readonly communityScore: number;
   readonly bio: string;
   readonly specialties: readonly string[];
+  /** Canonical nosesim.signatures archetype used by the static browser preview. */
+  readonly signatureId: AirformArchetypeId;
 }
 
 export interface PreviewNavigationDescriptor {
@@ -44,6 +47,7 @@ export const demoSurgeons: readonly SurgeonProfile[] = [
     communityScore: 94,
     bio: "A fictional Miami facial-plastics specialist focused on natural-looking profile refinement.",
     specialties: ["Natural profile refinement", "Preservation techniques"],
+    signatureId: "conservative",
   },
   {
     id: "surgeon-boreal",
@@ -56,6 +60,7 @@ export const demoSurgeons: readonly SurgeonProfile[] = [
     communityScore: 91,
     bio: "A fictional surgeon known for individualized planning and balanced frontal-view results.",
     specialties: ["Frontal balance", "Individualized planning"],
+    signatureId: "alar",
   },
   {
     id: "surgeon-cascade",
@@ -68,6 +73,7 @@ export const demoSurgeons: readonly SurgeonProfile[] = [
     communityScore: 89,
     bio: "A fictional facial surgeon combining aesthetic goals with careful attention to breathing.",
     specialties: ["Functional outcomes", "Tip refinement"],
+    signatureId: "dorsal",
   },
   {
     id: "surgeon-meridian",
@@ -80,6 +86,7 @@ export const demoSurgeons: readonly SurgeonProfile[] = [
     communityScore: 87,
     bio: "A fictional specialist offering conservative, structure-preserving rhinoplasty plans.",
     specialties: ["Conservative refinement", "Revision planning"],
+    signatureId: "signature",
   },
 ] as const;
 
