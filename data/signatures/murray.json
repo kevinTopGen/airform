@@ -1,0 +1,66 @@
+{
+  "id": "murray",
+  "name": "Kimpatrick Murray",
+  "tagline": "@murray.rhinoplasty",
+  "n_pairs": 5,
+  "delta": {
+    "alar_width": 0.7524349768041373,
+    "bridge_width": -0.5062269682030796,
+    "tip_width": 0.2076898507070899,
+    "nasal_length": 0.05517198871282232,
+    "dorsal_hump": -0.02652404994409155,
+    "tip_rotation_deg": 1.0775663413732939,
+    "tip_projection": -0.0018437789994161513
+  },
+  "std": {
+    "alar_width": 0.72475196871944,
+    "bridge_width": 0.3414026948687499,
+    "tip_width": 0.1733076957241031,
+    "nasal_length": 0.12941993933181142,
+    "dorsal_hump": 0.02990491620003498,
+    "tip_rotation_deg": 2.3788600697700373,
+    "tip_projection": 0.021615435632041723
+  },
+  "delta_modes": {
+    "alar_width": "proportional",
+    "bridge_width": "proportional",
+    "tip_width": "proportional",
+    "nasal_length": "absolute",
+    "dorsal_hump": "absolute",
+    "tip_rotation_deg": "absolute",
+    "tip_projection": "absolute"
+  },
+  "handle": "@murray.rhinoplasty",
+  "n_per_field": {
+    "alar_width": 2,
+    "bridge_width": 2,
+    "tip_width": 2,
+    "nasal_length": 5,
+    "dorsal_hump": 3,
+    "tip_rotation_deg": 3,
+    "tip_projection": 3
+  },
+  "confidence": {
+    "alar_width": "insufficient_data",
+    "bridge_width": "insufficient_data",
+    "tip_width": "insufficient_data",
+    "nasal_length": "insufficient_data",
+    "dorsal_hump": "insufficient_data",
+    "tip_rotation_deg": "insufficient_data",
+    "tip_projection": "insufficient_data"
+  },
+  "used": [
+    "1front",
+    "3front",
+    "2side",
+    "4side",
+    "5side"
+  ],
+  "rejected": [
+    "2front: front not measurable",
+    "4front: front not measurable",
+    "5front: front not measurable",
+    "1side: profile failed (dorsum/columella arc ratio 0.50 is not a nose/dorsum/columella arc ratio 0.50 is not a nose)",
+    "3side: profile failed (segmentation: backdrop not uniform (left flat 0.17 per-row 0.88; right flat 0.17 per-row 0.22)/segmentation: backdrop not uniform (left flat 0.09 per-row 0.87; right flat 0.18 per-row 0.50))"
+  ]
+}

@@ -1,0 +1,67 @@
+{
+  "id": "andres_bustillo",
+  "name": "Andres Bustillo, MD",
+  "tagline": "@andresbustillomd",
+  "n_pairs": 10,
+  "delta": {
+    "alar_width": -0.01215688406614257,
+    "bridge_width": 0.10308711634872814,
+    "tip_width": -0.17967501640127628,
+    "nasal_length": -0.016337147962367883,
+    "dorsal_hump": -0.009204290433586552,
+    "tip_rotation_deg": 5.5652503869215595,
+    "tip_projection": -0.005537599261986342
+  },
+  "std": {
+    "alar_width": 0.19677326077468818,
+    "bridge_width": 0.5475990641475688,
+    "tip_width": 0.32794763687430334,
+    "nasal_length": 0.022526396837083528,
+    "dorsal_hump": 0.005449410418008847,
+    "tip_rotation_deg": 4.020414404934365,
+    "tip_projection": 0.014320193819586794
+  },
+  "delta_modes": {
+    "alar_width": "proportional",
+    "bridge_width": "proportional",
+    "tip_width": "proportional",
+    "nasal_length": "absolute",
+    "dorsal_hump": "absolute",
+    "tip_rotation_deg": "absolute",
+    "tip_projection": "absolute"
+  },
+  "handle": "@andresbustillomd",
+  "n_per_field": {
+    "alar_width": 5,
+    "bridge_width": 5,
+    "tip_width": 5,
+    "nasal_length": 10,
+    "dorsal_hump": 5,
+    "tip_rotation_deg": 5,
+    "tip_projection": 5
+  },
+  "confidence": {
+    "alar_width": "insufficient_data",
+    "bridge_width": "insufficient_data",
+    "tip_width": "insufficient_data",
+    "nasal_length": "insufficient_data",
+    "dorsal_hump": "measured",
+    "tip_rotation_deg": "measured",
+    "tip_projection": "insufficient_data"
+  },
+  "used": [
+    "1front",
+    "2front",
+    "4front",
+    "5front",
+    "6front",
+    "1side",
+    "2side",
+    "3side",
+    "4side",
+    "5side"
+  ],
+  "rejected": [
+    "3front: pose gap 22deg > 12"
+  ]
+}

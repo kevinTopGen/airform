@@ -1,0 +1,51 @@
+{
+  "id": "carlos_wolf",
+  "name": "Carlos Wolf, MD",
+  "tagline": "@carloswolfmd",
+  "n_pairs": 5,
+  "delta": {
+    "nasal_length": -0.023849820773419017,
+    "dorsal_hump": -0.032258405488489655,
+    "tip_rotation_deg": 9.307598225049508,
+    "tip_projection": -0.015639871029335988
+  },
+  "std": {
+    "nasal_length": 0.01641475868304816,
+    "dorsal_hump": 0.022924419835919023,
+    "tip_rotation_deg": 6.222356049582452,
+    "tip_projection": 0.02029593767547293
+  },
+  "delta_modes": {
+    "nasal_length": "absolute",
+    "dorsal_hump": "absolute",
+    "tip_rotation_deg": "absolute",
+    "tip_projection": "absolute"
+  },
+  "handle": "@carloswolfmd",
+  "n_per_field": {
+    "nasal_length": 5,
+    "dorsal_hump": 5,
+    "tip_rotation_deg": 5,
+    "tip_projection": 5
+  },
+  "confidence": {
+    "nasal_length": "measured",
+    "dorsal_hump": "measured",
+    "tip_rotation_deg": "measured",
+    "tip_projection": "insufficient_data"
+  },
+  "used": [
+    "1side",
+    "2side",
+    "3side",
+    "4side",
+    "5side"
+  ],
+  "rejected": [
+    "1front: lower blepharoplasty",
+    "2front: facelift",
+    "3front: masseter botox",
+    "4front: facelift",
+    "5front: pose gap 35deg > 12"
+  ]
+}
