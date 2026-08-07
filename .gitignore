@@ -33,3 +33,7 @@ __pycache__/
 *.py[cod]
 .DS_Store
 .ipynb_checkpoints/
+
+# Real patient photographs from surgeon Instagram accounts. Never commit.
+work/
+surgeons/
