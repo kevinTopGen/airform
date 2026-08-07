@@ -20,6 +20,9 @@ models/
 data/
 out/
 bench/
+rhinoplasty_dataset/
+doctor_bank/
+tmp_qc/
 
 # Adapter caches. .cache/faceparse holds segmentation masks cut from real
 # photographs — derived biometric data, same exclusion rule as the photos.
@@ -33,3 +36,13 @@ __pycache__/
 *.py[cod]
 .DS_Store
 .ipynb_checkpoints/
+
+# Tournament web application
+node_modules/
+dist/
+*.tsbuildinfo
+vite.config.js
+vite.config.d.ts
+.env
+.env.*
+!.env.example
