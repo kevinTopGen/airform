@@ -3,12 +3,19 @@ import { App as TournamentExperience } from "../App";
 import type { SurgeonCase } from "../tournament/domain/models";
 import { SurgeonMap } from "./map/SurgeonMap";
 import { demoSurgeons, getSurgeonBySlug, getSurgeonCases, launchPreview, type SurgeonProfile } from "./data/surgeons";
+import renderSignatureUrl from "../../fixtures/render_signature.jpg";
 import "./product-shell.css";
 
 type Route = { name: "home" } | { name: "profile"; slug: string } | { name: "preview"; slug: string } | { name: "tournament" };
 
+const APP_BASE = import.meta.env.BASE_URL.replace(/\/$/, "");
+const publicAsset = (path: string) => `${import.meta.env.BASE_URL}${path.replace(/^\//, "")}`;
+
 const parseRoute = (): Route => {
-  const path = window.location.pathname.replace(/\/+$/, "") || "/";
+  const unbasedPath = APP_BASE && window.location.pathname.startsWith(APP_BASE)
+    ? window.location.pathname.slice(APP_BASE.length)
+    : window.location.pathname;
+  const path = unbasedPath.replace(/\/+$/, "") || "/";
   if (path === "/tournament") return { name: "tournament" };
   const profile = path.match(/^\/surgeons\/([^/]+)$/);
   if (profile?.[1]) return { name: "profile", slug: decodeURIComponent(profile[1]) };
@@ -37,8 +44,8 @@ function ProductHeader({ navigate }: NavigateProps) {
 
 function CasePair({ caseData }: { caseData: SurgeonCase }) {
   return <div className="case-pair">
-    <figure><img src={caseData.images.before.url} alt={caseData.images.before.alt} /><figcaption>Before</figcaption></figure>
-    <figure><img src={caseData.images.after.url} alt={caseData.images.after.alt} /><figcaption>After</figcaption></figure>
+    <figure><img src={publicAsset(caseData.images.before.url)} alt={caseData.images.before.alt} /><figcaption>Before</figcaption></figure>
+    <figure><img src={publicAsset(caseData.images.after.url)} alt={caseData.images.after.alt} /><figcaption>After</figcaption></figure>
   </div>;
 }
 
@@ -49,7 +56,7 @@ function SurgeonRow({ surgeon, rank, selected, onSelect, onOpen }: { surgeon: Su
       <span className="surgeon-rank">{rank}</span>
       <span className="surgeon-avatar" aria-hidden="true">{surgeon.name.split(" ").at(-1)?.[0]}</span>
       <span className="surgeon-identity"><strong>{surgeon.name}</strong><small><PinIcon /> {surgeon.locationLabel}</small><small>{surgeon.procedures[0]}</small></span>
-      {firstCase ? <span className="surgeon-result" aria-hidden="true"><img src={firstCase.images.before.url} alt="" /><img src={firstCase.images.after.url} alt="" /></span> : <span className="surgeon-result is-empty" aria-hidden="true" />}
+      {firstCase ? <span className="surgeon-result" aria-hidden="true"><img src={publicAsset(firstCase.images.before.url)} alt="" /><img src={publicAsset(firstCase.images.after.url)} alt="" /></span> : <span className="surgeon-result is-empty" aria-hidden="true" />}
       <span className="surgeon-score"><strong>{surgeon.communityScore}</strong><small>/100</small></span>
     </button>
     <button className="surgeon-row__open" type="button" onClick={onOpen} aria-label={`View ${surgeon.name}'s profile`}><ArrowIcon /></button>
@@ -66,7 +73,7 @@ function HomePage({ navigate }: NavigateProps) {
         <form className="location-search" onSubmit={scrollToSurgeons}><label><SearchIcon /><span className="sr-only">Location</span><input defaultValue="Miami, FL" aria-label="Miami, FL or ZIP code" /></label><button type="submit">Explore Miami surgeons</button></form>
         <button className="hero-text-link" type="button" onClick={() => navigate("/tournament")}>Rank results <ArrowIcon /></button>
       </div>
-      <div className="hero-visual" aria-label="Fictional profile outcome preview"><img className="hero-profile hero-profile--ghost-two" src="/fixtures/case-01-before.webp" alt="" /><img className="hero-profile hero-profile--ghost-one" src="/fixtures/case-01-before.webp" alt="" /><img className="hero-profile hero-profile--main" src="/fixtures/case-01-after.webp" alt="Fictional anonymized rhinoplasty profile result" /><span className="hero-measure hero-measure--horizontal" /><span className="hero-measure hero-measure--vertical" /></div>
+      <div className="hero-visual" aria-label="Fictional profile outcome preview"><img className="hero-profile hero-profile--ghost-two" src={publicAsset("fixtures/case-01-before.webp")} alt="" /><img className="hero-profile hero-profile--ghost-one" src={publicAsset("fixtures/case-01-before.webp")} alt="" /><img className="hero-profile hero-profile--main" src={publicAsset("fixtures/case-01-after.webp")} alt="Fictional anonymized rhinoplasty profile result" /><span className="hero-measure hero-measure--horizontal" /><span className="hero-measure hero-measure--vertical" /></div>
     </section>
     <section className="discovery-section" id="surgeons">
       <div className="discovery-heading"><div><h2>Four perspectives. One city.</h2><p>Community scores reflect anonymous preference rankings.</p></div><p>Showing four rhinoplasty surgeons in Miami, FL</p></div>
@@ -94,7 +101,7 @@ function PreviewHandoff({ slug, navigate }: NavigateProps & { slug: string }) {
   const surgeon = getSurgeonBySlug(slug);
   if (!surgeon) return <NotFound navigate={navigate} />;
   const descriptor = launchPreview(surgeon);
-  return <main className="preview-handoff"><div className="preview-image"><img src="/fixtures/render_signature.jpg" alt="Airform geometric preview demonstration" /></div><div className="preview-copy"><h1>Preview {surgeon.name}’s aesthetic.</h1><p>The product shell is ready to hand this stable surgeon ID to the image pipeline.</p><code>{descriptor.surgeonId}</code><button type="button" onClick={() => navigate(`/surgeons/${surgeon.slug}`)}>Return to profile</button></div></main>;
+  return <main className="preview-handoff"><div className="preview-image"><img src={renderSignatureUrl} alt="Airform geometric preview demonstration" /></div><div className="preview-copy"><h1>Preview {surgeon.name}’s aesthetic.</h1><p>The product shell is ready to hand this stable surgeon ID to the image pipeline.</p><code>{descriptor.surgeonId}</code><button type="button" onClick={() => navigate(`/surgeons/${surgeon.slug}`)}>Return to profile</button></div></main>;
 }
 
 function NotFound({ navigate }: NavigateProps) { return <main className="not-found"><h1>That surgeon isn’t in this demo.</h1><button type="button" onClick={() => navigate("/")}>Return home</button></main>; }
@@ -102,7 +109,7 @@ function NotFound({ navigate }: NavigateProps) { return <main className="not-fou
 export function ProductApp() {
   const [route, setRoute] = useState<Route>(parseRoute);
   useEffect(() => { const onPopState = () => setRoute(parseRoute()); window.addEventListener("popstate", onPopState); return () => window.removeEventListener("popstate", onPopState); }, []);
-  const navigate = (path: string) => { const [pathname, hash] = path.split("#"); window.history.pushState({}, "", `${pathname || window.location.pathname}${hash ? `#${hash}` : ""}`); setRoute(parseRoute()); window.scrollTo({ top: 0, behavior: "smooth" }); if (hash) window.setTimeout(() => document.getElementById(hash)?.scrollIntoView({ behavior: "smooth" }), 0); };
+  const navigate = (path: string) => { const [pathname, hash] = path.split("#"); const nextPath = pathname || window.location.pathname; window.history.pushState({}, "", `${APP_BASE}${nextPath}${hash ? `#${hash}` : ""}`); setRoute(parseRoute()); window.scrollTo({ top: 0, behavior: "smooth" }); if (hash) window.setTimeout(() => document.getElementById(hash)?.scrollIntoView({ behavior: "smooth" }), 0); };
   if (route.name === "tournament") return <TournamentExperience />;
   return <div className="product-shell"><ProductHeader navigate={navigate} />{route.name === "home" ? <HomePage navigate={navigate} /> : null}{route.name === "profile" ? <ProfilePage slug={route.slug} navigate={navigate} /> : null}{route.name === "preview" ? <PreviewHandoff slug={route.slug} navigate={navigate} /> : null}<footer className="product-footer"><span>airform / Miami demo</span><span>Aesthetic exploration only. Not medical advice.</span></footer></div>;
 }
