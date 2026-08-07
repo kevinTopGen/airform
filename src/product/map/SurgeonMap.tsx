@@ -33,31 +33,35 @@ const MIAMI_BOUNDS = {
 };
 
 let googleMapsPromise: Promise<typeof google.maps> | null = null;
+const MAP_CALLBACK = "__airformGoogleMapsReady";
 
 function loadGoogleMaps(apiKey: string): Promise<typeof google.maps> {
-  if (window.google?.maps) return Promise.resolve(window.google.maps);
+  if (typeof window.google?.maps?.Map === "function") return Promise.resolve(window.google.maps);
   if (googleMapsPromise) return googleMapsPromise;
 
   const pending = new Promise<typeof google.maps>((resolve, reject) => {
     const finish = () => {
-      if (window.google?.maps) resolve(window.google.maps);
-      else reject(new Error("Google Maps loaded without the Maps API."));
+      if (typeof window.google?.maps?.Map === "function") resolve(window.google.maps);
+      else reject(new Error("Google Maps loaded without the Maps constructor."));
     };
-    const fail = () => reject(new Error("Google Maps could not be loaded."));
+    const fail = () => {
+      delete window[MAP_CALLBACK as keyof Window];
+      reject(new Error("Google Maps could not be loaded."));
+    };
     const existing = document.getElementById(SCRIPT_ID) as HTMLScriptElement | null;
 
     if (existing) {
-      existing.addEventListener("load", finish, { once: true });
+      window.setTimeout(finish, 0);
       existing.addEventListener("error", fail, { once: true });
       return;
     }
 
+    Object.assign(window, { [MAP_CALLBACK]: finish });
     const script = document.createElement("script");
     script.id = SCRIPT_ID;
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(apiKey)}&v=weekly&loading=async`;
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(apiKey)}&v=weekly&loading=async&libraries=marker&callback=${MAP_CALLBACK}`;
     script.async = true;
     script.defer = true;
-    script.addEventListener("load", finish, { once: true });
     script.addEventListener("error", fail, { once: true });
     document.head.appendChild(script);
   });
@@ -159,7 +163,10 @@ export function SurgeonMap({ surgeons, selectedSurgeonId, onSelectSurgeon, onVie
     let active = true;
     void loadGoogleMaps(apiKey).then(
       () => active && setLoadState("ready"),
-      () => active && setLoadState("error"),
+      (error: unknown) => {
+        console.warn("Airform map is using its local fallback.", error);
+        if (active) setLoadState("error");
+      },
     );
     return () => {
       active = false;
